@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin – Bokningar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="assets/js/admin.js" defer></script>
+</head>
+
+<body>
+  <main class="container">
+    <section class="welcome">
+      <h1>Admin – Bokningar</h1>
+      <p>För lokalt bruk. Admin-nyckeln finns i <code>server/app.py</code> (ADMIN_KEY).</p>
+    </section>
+
+    <section class="cards grid two">
+      <article class="card">
+        <h2>Admin-nyckel</h2>
+        <label for="key">X-Admin-Key</label>
+        <input id="key" type="password" placeholder="Skriv din ADMIN_KEY här" />
+        <p style="margin-top:.75rem;">(Den skickas bara till din lokala server)</p>
+      </article>
+
+      <article class="card">
+        <h2>Lägg till bokning (approved)</h2>
+
+        <form id="addForm">
+          <label for="title">Titel</label>
+          <input id="title" name="title" type="text" placeholder="t.ex. Privat fest" required />
+
+          <label for="start">Start</label>
+          <input id="start" name="start" type="date" required />
+
+          <label for="end">Slut (valfritt)</label>
+          <input id="end" name="end" type="date" />
+
+          <button class="btn" type="submit">Lägg till</button>
+          <p id="addMsg" style="margin-top:.75rem;"></p>
+        </form>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:1.5rem;">
+      <h2>Alla förfrågningar & bokningar</h2>
+      <div id="list">Laddar…</div>
+    </section>
+
+    <p style="margin-top:1.5rem;"><a href="/boka.html">← Tillbaka till boka</a></p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Boka bygdegården</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- FullCalendar (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
+
+  <script src="assets/js/calendar.js" defer></script>
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <main class="container">
+    <section class="welcome">
+      <h1>Boka bygdegården</h1>
+      <p>
+        Här ser du bokade datum i kalendern. Skicka en förfrågan så återkommer vi.
+      </p>
+    </section>
+
+    <section class="cards grid two">
+      <article class="card">
+        <h2>Kalender</h2>
+        <p>Klicka på ett datum för att fylla i formuläret.</p>
+        <div id="calendar" style="margin-top: 1rem;"></div>
+      </article>
+
+      <article class="card">
+        <h2>Bokningsförfrågan</h2>
+
+        <form method="POST" action="/api/booking">
+          <label for="name">Namn *</label>
+          <input id="name" name="name" type="text" required />
+
+          <label for="email">E-post *</label>
+          <input id="email" name="email" type="email" required />
+
+          <label for="phone">Telefon</label>
+          <input id="phone" name="phone" type="tel" />
+
+          <label for="date">Datum *</label>
+          <input id="date" name="date" type="date" required />
+
+          <label for="type">Typ av bokning</label>
+          <input id="type" name="type" type="text" placeholder="t.ex. kalas, möte, kurs" />
+
+          <label for="message">Meddelande</label>
+          <textarea id="message" name="message" rows="6"></textarea>
+
+          <button class="btn" type="submit">Skicka förfrågan</button>
+        </form>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top: 1.5rem;">
+      <h2>Admin</h2>
+      <p>
+        Gå till <a href="/admin.html">admin.html</a> för att lägga in/godkänna bokningar.
+      </p>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+</body>
+</html>
