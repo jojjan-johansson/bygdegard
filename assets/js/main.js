@@ -19,13 +19,12 @@ function setActiveNavLink() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Dina partials ligger här:
   await loadPartial("#header", "assets/js/partials/header.html");
   await loadPartial("#footer", "assets/js/partials/footer.html");
 
   setActiveNavLink();
 
-  // Mobilmeny (efter header laddats)
+  // Mobilmeny
   document.addEventListener("click", (e) => {
     if (e.target && e.target.matches(".menu-toggle")) {
       document.querySelector("nav")?.classList.toggle("open");
@@ -36,17 +35,41 @@ document.addEventListener("DOMContentLoaded", async () => {
   const year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  // Formulär:
-  // - Om action="#" eller tomt: lokalt test (stoppa och visa alert)
-  // - Annars: låt formuläret skickas till servern på riktigt
-  document.querySelectorAll("form").forEach(form => {
-    form.addEventListener("submit", (e) => {
-      const action = (form.getAttribute("action") || "").trim();
-      if (action === "" || action === "#") {
-        e.preventDefault();
-        alert("Tack! (lokalt test) När servern är igång skickas formuläret till e-post.");
-        form.reset();
+  // Kontaktformulär (AJAX)
+  const contactForm = document.getElementById("contactForm");
+  if (contactForm) {
+    const contactMsg = document.getElementById("contactMsg");
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      contactMsg.textContent = "";
+      contactMsg.style.color = "";
+
+      const payload = {
+        name: contactForm.name.value.trim(),
+        email: contactForm.email.value.trim(),
+        message: contactForm.message.value.trim(),
+      };
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          contactMsg.style.color = "var(--accent)";
+          contactMsg.textContent = data.message || "Tack! Meddelandet har skickats.";
+          contactForm.reset();
+        } else {
+          contactMsg.style.color = "#f87171";
+          contactMsg.textContent = data.error || "Något gick fel.";
+        }
+      } catch {
+        contactMsg.style.color = "#f87171";
+        contactMsg.textContent = "Kunde inte skicka meddelandet. Försök igen.";
       }
     });
-  });
+  }
 });

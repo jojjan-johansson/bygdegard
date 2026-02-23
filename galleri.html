@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galleri – Via Bygdegårdsförening</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- main.js laddar header/footer-partials -->
+  <script src="assets/js/main.js" defer></script>
+  <!-- gallery.js hämtar och renderar bilder från API -->
+  <script src="assets/js/gallery.js" defer></script>
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <main class="container">
+    <section class="welcome">
+      <h1>Galleri</h1>
+      <p class="lead">Bilder från bygdegården och våra aktiviteter.</p>
+    </section>
+
+    <!-- Skelettpelare visas medan API-anropet laddas -->
+    <div id="galleryLoading" class="skeleton-masonry">
+      <div class="skeleton-img" style="height:200px"></div>
+      <div class="skeleton-img" style="height:280px"></div>
+      <div class="skeleton-img" style="height:160px"></div>
+      <div class="skeleton-img" style="height:240px"></div>
+      <div class="skeleton-img" style="height:180px"></div>
+      <div class="skeleton-img" style="height:220px"></div>
+    </div>
+
+    <!-- Tomt-state om inga bilder finns uppladdade -->
+    <p id="galleryEmpty" class="events-empty" style="display:none;">
+      Inga bilder uppladdade än — kom tillbaka snart!
+    </p>
+
+    <!-- Galleribilder renderas hit av gallery.js som ett masonry-grid -->
+    <div id="galleryGrid" class="gallery-masonry"></div>
+  </main>
+
+  <!-- Lightbox: visas när en bild klickas -->
+  <div id="lightbox" class="lightbox" style="display:none;" role="dialog" aria-modal="true">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Stäng">×</button>
+    <img id="lightboxImg" src="" alt="Förstoring av galleribild" />
+  </div>
+
+  <div id="footer"></div>
+</body>
+</html>

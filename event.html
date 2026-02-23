@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Årets event – Via Bygdegårdsförening</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script defer src="assets/js/main.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- main.js laddar header/footer-partials -->
+  <script src="assets/js/main.js" defer></script>
+  <!-- events.js hämtar och renderar event från API -->
+  <script src="assets/js/events.js" defer></script>
 </head>
+
 <body>
+  <div id="header"></div>
 
-<div id="header"></div>
+  <main class="container">
+    <section class="welcome">
+      <h1>Årets event</h1>
+      <p class="lead">Aktiviteter och datum under året.</p>
+    </section>
 
-<main class="container">
-  <h1>Årets event</h1>
-  <p class="lead">Här kan ni lägga upp aktiviteter och datum.</p>
-
-  <section class="grid three">
-    <div class="card">
-      <h2>Filmkväll</h2>
-      <p>Datum: (fyll i)</p>
+    <!-- Skelettkort visas medan API-anropet laddas -->
+    <div id="eventsLoading" class="skeleton-grid three">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
     </div>
-    <div class="card">
-      <h2>Vårmarknad</h2>
-      <p>Datum: (fyll i)</p>
-    </div>
-    <div class="card">
-      <h2>Bygdegårdsfix</h2>
-      <p>Datum: (fyll i)</p>
-    </div>
-  </section>
-</main>
 
-<div id="footer"></div>
+    <!-- Tomt-state om inga event finns i databasen -->
+    <p id="eventsEmpty" class="events-empty" style="display:none;">
+      Inga event inplanerade än — kom tillbaka snart!
+    </p>
 
+    <!-- Event-korten renderas hit av events.js -->
+    <div id="eventsGrid" class="grid three"></div>
+  </main>
+
+  <div id="footer"></div>
 </body>
 </html>

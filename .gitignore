@@ -1,0 +1,28 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+
+# Database
+data/bookings.sqlite
+data/*.db
+
+# Uploaded images
+data/images/
+
+# Logs
+*.log
+server.log
+
+# Windows Zone Identifier
+*:Zone.Identifier
+
+# Environment variables
+.env

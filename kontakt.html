@@ -24,17 +24,18 @@
 
     <div class="card">
       <h2>Formulär</h2>
-      <form>
+      <form id="contactForm">
         <label>Namn
-          <input required>
+          <input name="name" required>
         </label>
         <label>E-post
-          <input type="email" required>
+          <input name="email" type="email" required>
         </label>
         <label>Meddelande
-          <textarea rows="6" required></textarea>
+          <textarea name="message" rows="6" required></textarea>
         </label>
         <button class="btn" type="submit">Skicka</button>
+        <p id="contactMsg"></p>
       </form>
     </div>
   </section>

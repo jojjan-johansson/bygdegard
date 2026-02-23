@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
 
+  <!-- main.js laddar header/footer-partials -->
+  <script src="assets/js/main.js" defer></script>
   <script src="assets/js/calendar.js" defer></script>
 </head>
 
@@ -21,51 +23,64 @@
     <section class="welcome">
       <h1>Boka bygdegården</h1>
       <p>
-        Här ser du bokade datum i kalendern. Skicka en förfrågan så återkommer vi.
+        Klicka på ett ledigt datum i kalendern för att boka direkt.
       </p>
     </section>
 
-    <section class="cards grid two">
-      <article class="card">
-        <h2>Kalender</h2>
-        <p>Klicka på ett datum för att fylla i formuläret.</p>
-        <div id="calendar" style="margin-top: 1rem;"></div>
-      </article>
-
-      <article class="card">
-        <h2>Bokningsförfrågan</h2>
-
-        <form method="POST" action="/api/booking">
-          <label for="name">Namn *</label>
-          <input id="name" name="name" type="text" required />
-
-          <label for="email">E-post *</label>
-          <input id="email" name="email" type="email" required />
-
-          <label for="phone">Telefon</label>
-          <input id="phone" name="phone" type="tel" />
-
-          <label for="date">Datum *</label>
-          <input id="date" name="date" type="date" required />
-
-          <label for="type">Typ av bokning</label>
-          <input id="type" name="type" type="text" placeholder="t.ex. kalas, möte, kurs" />
-
-          <label for="message">Meddelande</label>
-          <textarea id="message" name="message" rows="6"></textarea>
-
-          <button class="btn" type="submit">Skicka förfrågan</button>
-        </form>
-      </article>
+    <section class="card">
+      <div id="calendar"></div>
     </section>
 
     <section class="card" style="margin-top: 1.5rem;">
       <h2>Admin</h2>
       <p>
-        Gå till <a href="/admin.html">admin.html</a> för att lägga in/godkänna bokningar.
+        Gå till <a href="/admin.html">admin.html</a> för att hantera bokningar.
       </p>
     </section>
   </main>
+
+  <!-- Bokningsmodal -->
+  <div id="bookingModal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <h2 id="modalTitle">Boka</h2>
+      <p id="modalDate" style="color:var(--muted);"></p>
+
+      <div id="modalOccupied" style="display:none;">
+        <p style="color:#f87171; font-weight:700;">Detta datum är redan bokat.</p>
+      </div>
+
+      <form id="bookingForm">
+        <label>Namn *
+          <input id="bookName" type="text" required />
+        </label>
+        <label>E-post *
+          <input id="bookEmail" type="email" required />
+        </label>
+        <label>Telefon
+          <input id="bookPhone" type="tel" />
+        </label>
+        <label>Typ av bokning
+          <select id="bookType">
+            <option value="2h">2 timmar</option>
+            <option value="heldag">Heldag</option>
+            <option value="helg">Hel helg (lör–sön)</option>
+          </select>
+        </label>
+        <!-- Tidslucke-väljare visas bara vid 2h-bokning, döljs annars av calendar.js -->
+        <label id="timeSlotRow">Välj tid
+          <select id="bookSlot">
+            <option value="09:00">09:00 – 11:00</option>
+            <option value="12:00">12:00 – 14:00</option>
+            <option value="15:00">15:00 – 17:00</option>
+            <option value="18:00">18:00 – 20:00</option>
+          </select>
+        </label>
+        <button class="btn" type="submit" style="margin-top:.5rem;">Boka</button>
+        <p id="bookMsg" style="margin-top:.75rem;"></p>
+      </form>
+    </div>
+  </div>
 
   <div id="footer"></div>
 </body>

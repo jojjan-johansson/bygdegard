@@ -2,52 +2,199 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin – Bokningar</title>
+  <title>Admin – Bygdegården</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- main.js laddar header/footer-partials -->
+  <script src="assets/js/main.js" defer></script>
+  <!-- admin.js hanterar inloggning, bokningar, event och galleri -->
   <script src="assets/js/admin.js" defer></script>
 </head>
 
 <body>
+  <div id="header"></div>
+
   <main class="container">
-    <section class="welcome">
-      <h1>Admin – Bokningar</h1>
-      <p>För lokalt bruk. Admin-nyckeln finns i <code>server/app.py</code> (ADMIN_KEY).</p>
-    </section>
 
-    <section class="cards grid two">
-      <article class="card">
-        <h2>Admin-nyckel</h2>
-        <label for="key">X-Admin-Key</label>
-        <input id="key" type="password" placeholder="Skriv din ADMIN_KEY här" />
-        <p style="margin-top:.75rem;">(Den skickas bara till din lokala server)</p>
-      </article>
-
-      <article class="card">
-        <h2>Lägg till bokning (approved)</h2>
-
-        <form id="addForm">
-          <label for="title">Titel</label>
-          <input id="title" name="title" type="text" placeholder="t.ex. Privat fest" required />
-
-          <label for="start">Start</label>
-          <input id="start" name="start" type="date" required />
-
-          <label for="end">Slut (valfritt)</label>
-          <input id="end" name="end" type="date" />
-
-          <button class="btn" type="submit">Lägg till</button>
-          <p id="addMsg" style="margin-top:.75rem;"></p>
+    <!-- =====================
+         INLOGGNING
+         Visas tills admin loggar in. Döljs av admin.js när sessionen är aktiv.
+    ===================== -->
+    <section id="loginSection" class="welcome">
+      <h1>Admin – Logga in</h1>
+      <div class="card" style="max-width:400px;">
+        <form id="loginForm" class="form">
+          <label for="password">
+            Lösenord
+            <input id="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button class="btn" type="submit">Logga in</button>
+          <p id="loginMsg"></p>
         </form>
-      </article>
+      </div>
     </section>
 
-    <section class="card" style="margin-top:1.5rem;">
-      <h2>Alla förfrågningar & bokningar</h2>
-      <div id="list">Laddar…</div>
-    </section>
+    <!-- =====================
+         ADMINPANEL
+         Dolt tills inloggning lyckats. Visas av admin.js.
+    ===================== -->
+    <div id="adminPanel" style="display:none;">
 
-    <p style="margin-top:1.5rem;"><a href="/boka.html">← Tillbaka till boka</a></p>
+      <!-- Rubrik + logga ut -->
+      <section class="welcome">
+        <h1>Admin – Bygdegården</h1>
+        <button class="btn" id="logoutBtn">Logga ut</button>
+      </section>
+
+      <!-- ---- Rad 1: Lägg till bokning + Kontaktmeddelanden ---- -->
+      <section class="cards grid two">
+        <article class="card">
+          <h2>Lägg till bokning</h2>
+          <form id="addForm" class="form">
+            <label for="bookTitle">
+              Titel
+              <input id="bookTitle" name="title" type="text" placeholder="t.ex. Privat fest" required />
+            </label>
+            <label for="bookStart">
+              Start
+              <input id="bookStart" name="start" type="date" required />
+            </label>
+            <label for="bookEnd">
+              Slut (valfritt)
+              <input id="bookEnd" name="end" type="date" />
+            </label>
+            <button class="btn" type="submit">Lägg till</button>
+            <p id="addMsg"></p>
+          </form>
+        </article>
+
+        <article class="card">
+          <h2>Kontaktmeddelanden</h2>
+          <div id="messagesList">Laddar…</div>
+        </article>
+      </section>
+
+      <!-- ---- Rad 2: Event-hantering ---- -->
+      <section class="card admin-section">
+        <h2>Årets event</h2>
+        <p class="muted small">Lägg till, redigera och ta bort event. Klicka "Ladda upp bild" för att lägga till en bild till ett event.</p>
+
+        <!-- Formulär: lägg till nytt event -->
+        <form id="addEventForm" class="form admin-add-form">
+          <div class="form-row">
+            <label for="eventTitle">
+              Titel *
+              <input id="eventTitle" name="title" type="text" placeholder="Filmkväll" required />
+            </label>
+            <label for="eventDate">
+              Datum
+              <input id="eventDate" name="date" type="date" />
+            </label>
+          </div>
+          <label for="eventDesc">
+            Beskrivning
+            <textarea id="eventDesc" name="description" rows="2" placeholder="Beskriv eventet…"></textarea>
+          </label>
+          <div>
+            <button class="btn" type="submit">+ Lägg till event</button>
+            <span id="addEventMsg" class="admin-msg"></span>
+          </div>
+        </form>
+
+        <!-- Lista med befintliga event — renderas av admin.js -->
+        <div id="eventsList" class="events-admin-list">Laddar…</div>
+      </section>
+
+      <!-- ---- Rad 3: Galleri ---- -->
+      <section class="card admin-section">
+        <h2>Galleri</h2>
+        <p class="muted small">Ladda upp bilder till galleriet. Tillåtna format: JPG, PNG, WebP, GIF.</p>
+
+        <div class="gallery-upload-bar">
+          <!-- Gömd file-input — triggas av knappen nedan -->
+          <input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none;" />
+          <button class="btn" id="galleryUploadBtn">Välj bild(er) att ladda upp</button>
+          <span id="galleryMsg" class="admin-msg"></span>
+        </div>
+
+        <!-- Galleri-grid med delete-knappar — renderas av admin.js -->
+        <div id="galleryAdminGrid" class="gallery-admin-grid">Laddar…</div>
+      </section>
+
+      <!-- ---- Rad 4: Styrelsen ---- -->
+      <section class="card admin-section">
+        <h2>Styrelsen</h2>
+        <p class="muted small">Hantera styrelseroller och kontaktpersoner. Ändras på styrelsen.html-sidan.</p>
+
+        <!-- Formulär: lägg till ny styrelsemedlem -->
+        <form id="addBoardForm" class="form admin-add-form">
+          <div class="form-row">
+            <label for="boardRole">
+              Roll *
+              <input id="boardRole" name="role" type="text" placeholder="t.ex. Ordförande, Kassör, Suppliant" required />
+            </label>
+            <label for="boardName">
+              Namn *
+              <input id="boardName" name="name" type="text" placeholder="För- och efternamn" required />
+            </label>
+          </div>
+          <label for="boardContact">
+            Kontakt (telefon/e-post)
+            <input id="boardContact" name="contact" type="text" placeholder="070-123 45 67 eller namn@example.se" />
+          </label>
+          <div>
+            <button class="btn" type="submit">+ Lägg till styrelsemedlem</button>
+            <span id="addBoardMsg" class="admin-msg"></span>
+          </div>
+        </form>
+
+        <!-- Lista med befintliga styrelsemedlemmar — renderas av admin.js -->
+        <div id="boardList" class="board-admin-list">Laddar…</div>
+      </section>
+
+      <!-- ---- Rad 5: Information-sidan ---- -->
+      <section class="card admin-section">
+        <h2>Information-sidan</h2>
+        <p class="muted small">Redigera sektioner på information.html (t.ex. "Lokalen", "Regler").</p>
+
+        <form id="addInfoForm" class="form admin-add-form">
+          <label for="infoTitle">
+            Rubrik *
+            <input id="infoTitle" name="title" type="text" placeholder="t.ex. Lokalen, Regler" required />
+          </label>
+          <label for="infoContent">
+            Innehåll *
+            <textarea id="infoContent" name="content" rows="4" placeholder="Skriv innehåll här. Du kan använda HTML-taggar som <ul>, <li>, <strong>, etc." required></textarea>
+          </label>
+          <div>
+            <button class="btn" type="submit">+ Lägg till sektion</button>
+            <span id="addInfoMsg" class="admin-msg"></span>
+          </div>
+        </form>
+
+        <div id="infoList">Laddar…</div>
+      </section>
+
+      <!-- ---- Rad 6: Medlemsregister ---- -->
+      <section class="card admin-section">
+        <h2>Medlemsregister</h2>
+        <p class="muted small">Registrerade medlemmar. Klicka "Radera" för att ta bort en person (GDPR).</p>
+        <div id="membersList">Laddar…</div>
+      </section>
+
+      <!-- ---- Rad 5: Alla bokningar ---- -->
+      <section class="card admin-section">
+        <h2>Alla förfrågningar & bokningar</h2>
+        <div id="list">Laddar…</div>
+      </section>
+
+    </div><!-- /adminPanel -->
   </main>
+
+  <!-- Dolda file-inputs för bilduppladdning -->
+  <input id="eventImageInput" type="file" accept="image/*" style="display:none;" />
+  <input id="boardImageInput" type="file" accept="image/*" style="display:none;" />
+
+  <div id="footer"></div>
 </body>
 </html>

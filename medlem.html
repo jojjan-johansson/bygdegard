@@ -1,46 +1,93 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bli medlem – Via Bygdegårdsförening</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script defer src="assets/js/main.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- main.js laddar header/footer-partials -->
+  <script src="assets/js/main.js" defer></script>
+  <!-- member.js hanterar AJAX-formuläret -->
+  <script src="assets/js/member.js" defer></script>
 </head>
+
 <body>
+  <div id="header"></div>
 
-<div id="header"></div>
+  <main class="container">
+    <section class="welcome">
+      <h1>Bli medlem</h1>
+      <p class="lead">Stöd bygdegårdens verksamhet och ta del av allt vi erbjuder.</p>
+    </section>
 
-<main class="container">
-  <h1>Bli medlem</h1>
-  <p class="lead">Stöd bygdegården och föreningens verksamhet.</p>
+    <section class="grid two">
 
-  <section class="grid two">
-    <div class="card">
-      <h2>Medlemskap</h2>
-      <p>Medlemsavgift: (fyll i)</p>
-      <p>Betalning: (fyll i Swish/Bankgiro)</p>
-    </div>
+      <!-- ── Vänster: Medlemsinfo + QR ── -->
+      <article class="card member-info-card">
+        <div class="member-qr-wrap">
+          <img src="img/qr.png" alt="Swish QR-kod för betalning" class="member-qr" />
+          <p class="member-qr-label">Swish QR-kod</p>
+        </div>
 
-    <div class="card">
-      <h2>Intresseanmälan</h2>
-      <form>
-        <label>Namn
-          <input required>
-        </label>
-        <label>E-post
-          <input type="email" required>
-        </label>
-        <label>Telefon
-          <input>
-        </label>
-        <button class="btn" type="submit">Skicka</button>
-      </form>
-    </div>
-  </section>
-</main>
+        <h2 class="member-heading">Medlemskap 2026</h2>
+        <p class="member-price">
+          <span class="member-price-amount">200 kr</span>
+          <span class="muted">/ familj och hushåll</span>
+        </p>
 
-<div id="footer"></div>
+        <ul class="member-benefits">
+          <li>
+            <span class="benefit-icon">✓</span>
+            Tar del av flertalet event gratis
+          </li>
+          <li>
+            <span class="benefit-icon">✓</span>
+            All idrottsaktivitet ingår
+          </li>
+          <li>
+            <span class="benefit-icon">✓</span>
+            Stöder den lokala bygdegårdens verksamhet
+          </li>
+        </ul>
 
+        <p class="member-payment-note">
+          Fyll i dina uppgifter till höger för att komma med i medlemsregistret.
+          Vi kontrollerar att din betalning kommit in.
+        </p>
+      </article>
+
+      <!-- ── Höger: Intresseanmälan ── -->
+      <article class="card">
+        <h2>Registrera dig som medlem</h2>
+        <p class="muted" style="margin-bottom:1rem;">Fyll i dina uppgifter så lägger vi till dig i medlemsregistret.</p>
+
+        <form id="memberForm" class="form">
+          <label for="memberName">
+            Namn *
+            <input id="memberName" name="name" type="text" autocomplete="name" required />
+          </label>
+          <label for="memberEmail">
+            E-post *
+            <input id="memberEmail" name="email" type="email" autocomplete="email" required />
+          </label>
+          <label for="memberPhone">
+            Telefon (valfritt)
+            <input id="memberPhone" name="phone" type="tel" autocomplete="tel" />
+          </label>
+          <button class="btn" type="submit">Registrera mig</button>
+          <p id="memberMsg"></p>
+        </form>
+
+        <p class="member-gdpr">
+          Dina uppgifter lagras säkert och används enbart för att hantera ditt
+          medlemskap. Du kan begära att dina uppgifter raderas genom att
+          kontakta oss via kontaktformuläret.
+        </p>
+      </article>
+
+    </section>
+  </main>
+
+  <div id="footer"></div>
 </body>
 </html>

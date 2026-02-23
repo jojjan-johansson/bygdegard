@@ -1,41 +1,35 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Information – Via Bygdegårdsförening</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script defer src="assets/js/main.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/information.js" defer></script>
 </head>
+
 <body>
+  <div id="header"></div>
 
-<div id="header"></div>
+  <main class="container">
+    <section class="welcome">
+      <h1>Information</h1>
+      <p class="lead">Praktisk info om lokalen, utrustning och regler.</p>
+    </section>
 
-<main class="container">
-  <h1>Information</h1>
-  <p class="lead">Praktisk info om lokalen, utrustning och regler.</p>
-
-  <section class="grid two">
-    <div class="card">
-      <h2>Lokalen</h2>
-      <ul>
-        <li>Max antal personer: (fyll i)</li>
-        <li>Kök: (fyll i)</li>
-        <li>Tillgänglighet: (fyll i)</li>
-      </ul>
+    <div id="infoLoading" class="skeleton-grid two">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
     </div>
-    <div class="card">
-      <h2>Regler</h2>
-      <ul>
-        <li>Städning efter bokning</li>
-        <li>Nyckelutlämning enligt överenskommelse</li>
-        <li>Skador rapporteras direkt</li>
-      </ul>
-    </div>
-  </section>
-</main>
 
-<div id="footer"></div>
+    <p id="infoEmpty" class="events-empty" style="display:none;">
+      Ingen information inlagd än.
+    </p>
 
+    <div id="infoGrid" class="grid two"></div>
+  </main>
+
+  <div id="footer"></div>
 </body>
 </html>

@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Styrelsen – Via Bygdegårdsförening</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script defer src="assets/js/main.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- main.js laddar header/footer-partials -->
+  <script src="assets/js/main.js" defer></script>
+  <!-- board.js hämtar och renderar styrelsemedlemmar -->
+  <script src="assets/js/board.js" defer></script>
 </head>
+
 <body>
+  <div id="header"></div>
 
-<div id="header"></div>
+  <main class="container">
+    <section class="welcome">
+      <h1>Styrelsen</h1>
+      <p class="lead">Kontaktuppgifter till styrelsen.</p>
+    </section>
 
-<main class="container">
-  <h1>Styrelsen</h1>
-  <p class="lead">Kontaktuppgifter till styrelsen.</p>
-
-  <section class="grid three">
-    <div class="card">
-      <h2>Ordförande</h2>
-      <p>Namn: (fyll i)</p>
-      <p>Kontakt: (fyll i)</p>
+    <!-- Skelettkort visas medan API-anropet laddas -->
+    <div id="boardLoading" class="skeleton-grid three">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
     </div>
-    <div class="card">
-      <h2>Kassör</h2>
-      <p>Namn: Johanna</p>
-      <p>Kontakt: (fyll i)</p>
-    </div>
-    <div class="card">
-      <h2>Sekreterare</h2>
-      <p>Namn: (fyll i)</p>
-      <p>Kontakt: (fyll i)</p>
-    </div>
-  </section>
-</main>
 
-<div id="footer"></div>
+    <!-- Tomt-state om inga styrelsemedlemmar finns -->
+    <p id="boardEmpty" class="events-empty" style="display:none;">
+      Inga styrelsemedlemmar inlagda än.
+    </p>
 
+    <!-- Styrelsemedlemmar renderas hit av board.js -->
+    <div id="boardGrid" class="grid three"></div>
+  </main>
+
+  <div id="footer"></div>
 </body>
 </html>
