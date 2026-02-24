@@ -65,8 +65,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const galleryFileInput = document.getElementById("galleryFileInput");
   const galleryUploadBtn = document.getElementById("galleryUploadBtn");
 
-  // Håller koll på vilket event-id som är aktivt vid bilduppladdning
-  let currentEventImageId = null;
+  // Sponsorer
+  const sponsorsList      = document.getElementById("sponsorsList");
+  const addSponsorForm    = document.getElementById("addSponsorForm");
+  const addSponsorMsg     = document.getElementById("addSponsorMsg");
+  const sponsorImageInput = document.getElementById("sponsorImageInput");
+
+  // Håller koll på vilket event-id/board-id/sponsor-id som är aktivt vid bilduppladdning
+  let currentEventImageId   = null;
+  let currentSponsorImageId = null;
 
 
   // ─────────────────────────────
@@ -117,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMembers();
     loadBoard();
     loadInfo();
+    loadSponsors();
   }
 
   function showLogin() {
@@ -1097,5 +1105,192 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(err.message);
     }
   });
+
+
+  // =============================================================================
+  // SPONSORER
+  // =============================================================================
+
+  /**
+   * VARFÖR: Admin behöver se och hantera alla sponsorer.
+   * VAD: Hämtar sponsorer från API:et och renderar dem med redigerings- och raderingsknappar.
+   * HUR: GET /api/admin/sponsors returnerar alla sponsorer, vi bygger HTML och visar inline-redigering.
+   */
+  async function loadSponsors() {
+    try {
+      const res  = await fetch("/api/sponsors");
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+
+      if (!data.sponsors || data.sponsors.length === 0) {
+        sponsorsList.innerHTML = `<p class="muted">Inga sponsorer inlagda än.</p>`;
+        return;
+      }
+
+      sponsorsList.innerHTML = data.sponsors.map(s => `
+        <div class="admin-item" data-id="${s.id}">
+          <div class="sponsor-admin-card">
+            ${s.image_path
+              ? `<img src="/${esc(s.image_path)}" alt="${esc(s.name)}" class="sponsor-admin-thumb" />`
+              : `<div class="sponsor-admin-thumb-placeholder"></div>`
+            }
+            <div class="sponsor-admin-info">
+              <strong>${esc(s.name)}</strong>
+              ${s.description ? `<p class="muted small">${esc(s.description)}</p>` : ''}
+              ${s.url ? `<a href="${esc(s.url)}" target="_blank" class="muted small" rel="noopener">${esc(s.url)}</a>` : ''}
+            </div>
+          </div>
+          <div class="admin-item-actions">
+            <button class="btn" data-action="upload-image" data-id="${s.id}">Ladda upp bild</button>
+            <button class="btn" data-action="edit" data-id="${s.id}">Redigera</button>
+            <button class="btn btn-danger" data-action="delete" data-id="${s.id}">Radera</button>
+          </div>
+        </div>
+      `).join("");
+    } catch (err) {
+      sponsorsList.innerHTML = `<p class="muted">Kunde inte ladda sponsorer.</p>`;
+    }
+  }
+
+  // Lägg till ny sponsor
+  addSponsorForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const payload = {
+      name:        form.get("name"),
+      description: form.get("description"),
+      url:         form.get("url"),
+    };
+
+    try {
+      const res  = await fetch("/api/admin/sponsors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+
+      showMsg(addSponsorMsg, "Sponsor tillagd!");
+      e.target.reset();
+      await loadSponsors();
+    } catch (err) {
+      showMsg(addSponsorMsg, err.message, false);
+    }
+  });
+
+  // Event delegation för edit/delete/upload-image
+  sponsorsList.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+
+    const action = btn.getAttribute("data-action");
+    const id     = parseInt(btn.getAttribute("data-id"), 10);
+
+    if (action === "delete") {
+      if (!confirm("Ta bort denna sponsor permanent?")) return;
+      try {
+        const res  = await fetch(`/api/admin/sponsors/${id}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error);
+        await loadSponsors();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    if (action === "edit") {
+      const item = e.target.closest(".admin-item");
+      const existing = sponsorsList.querySelector(".admin-edit-form");
+      if (existing) existing.remove();
+
+      // Hämta befintlig data
+      const res  = await fetch("/api/sponsors");
+      const data = await res.json();
+      const sponsor = data.sponsors.find(s => s.id === id);
+      if (!sponsor) return;
+
+      // Visa redigeringsformulär
+      const form = document.createElement("div");
+      form.className = "admin-edit-form";
+      form.innerHTML = `
+        <label>
+          Namn *
+          <input name="name" value="${esc(sponsor.name)}" required />
+        </label>
+        <label>
+          Beskrivning
+          <textarea name="description" rows="2">${esc(sponsor.description || '')}</textarea>
+        </label>
+        <label>
+          Webbplats
+          <input name="url" type="url" value="${esc(sponsor.url || '')}" />
+        </label>
+        <div class="admin-edit-buttons">
+          <button class="btn" data-save="${id}">Spara</button>
+          <button class="btn" data-cancel>Avbryt</button>
+        </div>
+      `;
+
+      item.appendChild(form);
+
+      // Spara-knapp
+      form.querySelector("[data-save]").addEventListener("click", async () => {
+        const formData = new FormData(form.querySelector("input").form || form);
+        const payload = {
+          name:        form.querySelector('[name="name"]').value,
+          description: form.querySelector('[name="description"]').value,
+          url:         form.querySelector('[name="url"]').value,
+        };
+
+        try {
+          const res  = await fetch(`/api/admin/sponsors/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const d = await res.json();
+          if (!d.ok) throw new Error(d.error);
+          await loadSponsors();
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+
+      // Avbryt-knapp
+      form.querySelector("[data-cancel]").addEventListener("click", () => {
+        form.remove();
+      });
+    }
+
+    if (action === "upload-image") {
+      currentSponsorImageId = id;
+      sponsorImageInput.value = "";
+      sponsorImageInput.click();
+    }
+  });
+
+  // Bilduppladdning för sponsor
+  sponsorImageInput.addEventListener("change", async () => {
+    if (!sponsorImageInput.files.length || currentSponsorImageId === null) return;
+
+    const form = new FormData();
+    form.append("image", sponsorImageInput.files[0]);
+
+    try {
+      const res  = await fetch(`/api/admin/sponsors/${currentSponsorImageId}/image`, {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      await loadSponsors();
+    } catch (err) {
+      alert(err.message);
+    }
+
+    currentSponsorImageId = null;
+  });
+
 
 });

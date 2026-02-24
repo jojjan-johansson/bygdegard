@@ -496,6 +496,75 @@ footer{
 
 
 /* ========================
+   SPONSORER-SIDAN
+======================== */
+
+/* Sponsor-kort med logotyp */
+.sponsor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+/* Sponsor-logotyp */
+.sponsor-logo,
+.sponsor-logo-placeholder {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  max-height: 100px;
+  object-fit: contain;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+.sponsor-logo-placeholder {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, rgba(110,231,183,.12), rgba(147,197,253,.1));
+}
+
+.sponsor-card h2 {
+  margin: .5rem 0 .35rem;
+  font-size: 1.15rem;
+}
+
+.sponsor-card .btn {
+  margin-top: .5rem;
+}
+
+/* Admin-vy för sponsorer */
+.sponsor-admin-card {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sponsor-admin-thumb,
+.sponsor-admin-thumb-placeholder {
+  width: 80px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.sponsor-admin-thumb-placeholder {
+  background: linear-gradient(135deg, rgba(110,231,183,.12), rgba(147,197,253,.1));
+}
+
+.sponsor-admin-info {
+  flex: 1;
+  min-width: 0;
+}
+.sponsor-admin-info strong {
+  display: block;
+  margin-bottom: .25rem;
+}
+
+
+/* ========================
    BLI MEDLEM-SIDAN
 ======================== */
 
@@ -756,16 +825,108 @@ footer{
 
 
 @media (max-width: 900px){
+  /* Layout */
   .grid.three{ grid-template-columns: 1fr; }
   .grid.two{ grid-template-columns: 1fr; }
   .form-row{ grid-template-columns: 1fr; }
-  .menu-toggle{ display:inline-block; }
-  nav{ display:none; width:100%; padding: .5rem 0; }
-  nav.open{ display:flex; }
-  nav a{ width: 100%; }
   .skeleton-grid.three { grid-template-columns: 1fr; }
   .skeleton-masonry { column-count: 1; }
   .gallery-masonry { column-count: 1; }
+
+  /* Navigation */
+  .menu-toggle{
+    display: inline-block;
+    font-size: 1.5rem;
+  }
+  .header-inner {
+    flex-wrap: wrap;
+  }
+  nav{
+    display: none;
+    width: 100%;
+    padding: .5rem 0;
+    flex-direction: column;
+  }
+  nav.open{ display: flex; }
+  nav a{
+    width: 100%;
+    padding: .7rem;
+    text-align: left;
+  }
+
+  /* Bilder */
+  .top-image {
+    max-width: 80px;
+    margin-bottom: 1rem;
+  }
+  .board-photo,
+  .board-photo-placeholder {
+    max-width: 120px;
+    margin: 0 auto;
+  }
+  .sponsor-logo,
+  .sponsor-logo-placeholder {
+    max-width: 150px;
+    max-height: 80px;
+  }
+
+  /* Kort och sektioner */
+  .card {
+    padding: 1rem;
+  }
+  .sponsor-card,
+  .board-card {
+    padding: 1rem;
+  }
+  .welcome {
+    padding: 1rem 0;
+  }
+
+  /* Knappar - större för touch */
+  .btn {
+    padding: .7rem 1rem;
+    font-size: 1rem;
+    min-height: 44px; /* iOS rekommendation */
+  }
+
+  /* Formulär */
+  input, select, textarea {
+    font-size: 16px; /* Förhindrar zoom på iOS */
+    padding: .8rem;
+  }
+
+  /* Typo */
+  h1 {
+    font-size: clamp(1.8rem, 5vw, 2.2rem);
+  }
+  .lead {
+    font-size: 1rem;
+  }
+
+  /* Admin-panel */
+  .admin-item {
+    flex-direction: column;
+    gap: .75rem;
+  }
+  .admin-item-actions {
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+  .admin-item-actions .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+  .board-admin-card,
+  .sponsor-admin-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .board-admin-thumb,
+  .sponsor-admin-thumb,
+  .board-admin-thumb-placeholder,
+  .sponsor-admin-thumb-placeholder {
+    margin: 0 auto;
+  }
 }
 
 @media (min-width: 601px) and (max-width: 900px) {

@@ -175,6 +175,37 @@
         <div id="infoList">Laddar…</div>
       </section>
 
+      <!-- ---- Rad 5.5: Sponsorer ---- -->
+      <section class="card admin-section">
+        <h2>Sponsorer</h2>
+        <p class="muted small">Hantera sponsorer som stödjer bygdegården. Klicka "Ladda upp logotyp" för att lägga till bild.</p>
+
+        <!-- Formulär: lägg till ny sponsor -->
+        <form id="addSponsorForm" class="form admin-add-form">
+          <div class="form-row">
+            <label for="sponsorName">
+              Namn *
+              <input id="sponsorName" name="name" type="text" placeholder="t.ex. ICA Maxi, Erikssons Bygghandel" required />
+            </label>
+            <label for="sponsorUrl">
+              Webbplats (valfritt)
+              <input id="sponsorUrl" name="url" type="url" placeholder="Klistra in hela URL:en t.ex. https://exempel.se" />
+            </label>
+          </div>
+          <label for="sponsorDesc">
+            Beskrivning (valfritt)
+            <textarea id="sponsorDesc" name="description" rows="2" placeholder="Kort beskrivning av sponsorn…"></textarea>
+          </label>
+          <div>
+            <button class="btn" type="submit">+ Lägg till sponsor</button>
+            <span id="addSponsorMsg" class="admin-msg"></span>
+          </div>
+        </form>
+
+        <!-- Lista med befintliga sponsorer — renderas av admin.js -->
+        <div id="sponsorsList" class="sponsors-admin-list">Laddar…</div>
+      </section>
+
       <!-- ---- Rad 6: Medlemsregister ---- -->
       <section class="card admin-section">
         <h2>Medlemsregister</h2>
@@ -194,6 +225,7 @@
   <!-- Dolda file-inputs för bilduppladdning -->
   <input id="eventImageInput" type="file" accept="image/*" style="display:none;" />
   <input id="boardImageInput" type="file" accept="image/*" style="display:none;" />
+  <input id="sponsorImageInput" type="file" accept="image/*" style="display:none;" />
 
   <div id="footer"></div>
 </body>

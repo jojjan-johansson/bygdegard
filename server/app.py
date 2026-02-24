@@ -179,6 +179,21 @@ def ensure_db() -> None:
             con.execute("ALTER TABLE board_members ADD COLUMN image_path TEXT")
         except Exception:
             pass  # kolumnen finns redan
+
+        # Sponsorer — företag/organisationer som stödjer bygdegården
+        con.execute(
+            """
+            CREATE TABLE IF NOT EXISTS sponsors (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                name          TEXT NOT NULL,
+                description   TEXT,
+                url           TEXT,
+                image_path    TEXT,
+                display_order INTEGER NOT NULL DEFAULT 0,
+                created_at    TEXT NOT NULL
+            )
+            """
+        )
         con.commit()
 
 
@@ -1111,6 +1126,167 @@ def api_admin_board_image(board_id: int):
         rel_path = save_path.relative_to(PROJECT_ROOT).as_posix()
 
         con.execute("UPDATE board_members SET image_path=? WHERE id=?", (rel_path, board_id))
+        con.commit()
+
+    return jsonify({"ok": True, "image_path": rel_path})
+
+
+# =========================
+# API: Sponsorer (publik)
+# =========================
+
+@app.get("/api/sponsors")
+def api_get_sponsors():
+    """
+    VARFÖR: Sponsorer-sidan behöver lista alla sponsorer som stödjer bygdegården.
+    VAD: Returnerar alla sponsorer sorterade efter display_order.
+    HUR: Hämtar från sponsors-tabellen med namn, beskrivning, URL och logotyp.
+    """
+    try:
+        with db() as con:
+            rows = con.execute(
+                "SELECT id, name, description, url, image_path FROM sponsors ORDER BY display_order ASC, id ASC"
+            ).fetchall()
+        return jsonify({"ok": True, "sponsors": [dict(r) for r in rows]})
+    except Exception:
+        return jsonify({"ok": False, "error": "Kunde inte hämta sponsorer"}), 500
+
+
+# =========================
+# API: Admin — Sponsorer
+# =========================
+
+@app.post("/api/admin/sponsors")
+def api_admin_create_sponsor():
+    """
+    VARFÖR: Admin ska kunna lägga till nya sponsorer.
+    VAD: Skapar en ny sponsor med namn, beskrivning och URL.
+    HUR: Tar emot JSON, sätter display_order till max+1 för att hamna sist.
+    """
+    if not is_admin():
+        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+
+    data        = request.get_json(silent=True) or {}
+    name        = (data.get("name")        or "").strip()
+    description = (data.get("description") or "").strip() or None
+    url         = (data.get("url")         or "").strip() or None
+
+    if not name:
+        return jsonify({"ok": False, "error": "Namn krävs"}), 400
+
+    with db() as con:
+        # Hitta högsta display_order och sätt nya sponsorn sist
+        max_order = con.execute("SELECT COALESCE(MAX(display_order), 0) FROM sponsors").fetchone()[0]
+        con.execute(
+            "INSERT INTO sponsors (name, description, url, display_order, created_at) VALUES (?, ?, ?, ?, ?)",
+            (name, description, url, max_order + 1, utc_now_iso()),
+        )
+        con.commit()
+
+    return jsonify({"ok": True})
+
+
+@app.put("/api/admin/sponsors/<int:sponsor_id>")
+def api_admin_update_sponsor(sponsor_id: int):
+    """
+    VARFÖR: Admin ska kunna redigera befintliga sponsorer.
+    VAD: Uppdaterar en sponsors uppgifter.
+    HUR: PUT med JSON-kropp, uppdaterar DB-raden via sponsor_id.
+    """
+    if not is_admin():
+        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+
+    data        = request.get_json(silent=True) or {}
+    name        = (data.get("name")        or "").strip()
+    description = (data.get("description") or "").strip() or None
+    url         = (data.get("url")         or "").strip() or None
+
+    if not name:
+        return jsonify({"ok": False, "error": "Namn krävs"}), 400
+
+    with db() as con:
+        con.execute(
+            "UPDATE sponsors SET name=?, description=?, url=? WHERE id=?",
+            (name, description, url, sponsor_id),
+        )
+        con.commit()
+
+    return jsonify({"ok": True})
+
+
+@app.delete("/api/admin/sponsors/<int:sponsor_id>")
+def api_admin_delete_sponsor(sponsor_id: int):
+    """
+    VARFÖR: Admin ska kunna ta bort sponsorer.
+    VAD: Raderar en sponsor permanent och tar bort eventuell logotyp.
+    HUR: DELETE-request, tar bort raden från sponsors.
+    """
+    if not is_admin():
+        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+
+    with db() as con:
+        # Hämta image_path för att kunna radera logotypen
+        row = con.execute("SELECT image_path FROM sponsors WHERE id=?", (sponsor_id,)).fetchone()
+        if not row:
+            return jsonify({"ok": False, "error": "Sponsor hittades inte"}), 404
+
+        # Ta bort logotyp om den finns
+        if row["image_path"]:
+            img_file = PROJECT_ROOT / row["image_path"]
+            if img_file.is_file():
+                img_file.unlink()
+
+        result = con.execute("DELETE FROM sponsors WHERE id=?", (sponsor_id,))
+        con.commit()
+
+    return jsonify({"ok": True})
+
+
+@app.post("/api/admin/sponsors/<int:sponsor_id>/image")
+def api_admin_sponsor_image(sponsor_id: int):
+    """
+    VARFÖR: Sponsorer kan ha logotyper.
+    VAD: Tar emot en bild-fil (multipart/form-data) och sparar den på servern.
+         Uppdaterar sponsors.image_path i databasen.
+    HUR:
+      - Filen sparas i data/images/sponsors/<sponsor_id>/<säkertfilnamn>
+      - Eventuell gammal bild tas bort
+      - image_path sparas relativt projektroten
+    """
+    if not is_admin():
+        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+
+    if "image" not in request.files:
+        return jsonify({"ok": False, "error": "Ingen fil skickades"}), 400
+
+    file = request.files["image"]
+    if not file.filename or not allowed_file(file.filename):
+        return jsonify({"ok": False, "error": "Otillåten filtyp"}), 400
+
+    # Kontrollera att sponsorn finns
+    with db() as con:
+        row = con.execute("SELECT image_path FROM sponsors WHERE id=?", (sponsor_id,)).fetchone()
+        if not row:
+            return jsonify({"ok": False, "error": "Sponsor hittades inte"}), 404
+
+        # Ta bort gammal bild om det finns en
+        if row["image_path"]:
+            old_file = PROJECT_ROOT / row["image_path"]
+            if old_file.is_file():
+                old_file.unlink()
+
+        # Spara ny bild i sponsors/<sponsor_id>/
+        sponsor_dir = IMAGES_DIR / "sponsors" / str(sponsor_id)
+        sponsor_dir.mkdir(parents=True, exist_ok=True)
+
+        filename  = secure_filename(file.filename)
+        save_path = sponsor_dir / filename
+        file.save(save_path)
+
+        # Sökväg relativt projektroten
+        rel_path = save_path.relative_to(PROJECT_ROOT).as_posix()
+
+        con.execute("UPDATE sponsors SET image_path=? WHERE id=?", (rel_path, sponsor_id))
         con.commit()
 
     return jsonify({"ok": True, "image_path": rel_path})
