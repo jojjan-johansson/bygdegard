@@ -293,6 +293,88 @@ footer{
   .dev-promo-inner{ flex-direction:column; align-items:flex-start; }
 }
 
+/* ========================
+   STARTSIDA-LÄNKAR
+   Redigerbara länk-pills som visas på startsidan.
+   Sektionen är dold tills minst en länk finns i databasen.
+======================== */
+.home-links-section {
+  margin-top: 2rem;
+}
+.home-links-section h2 {
+  margin-bottom: .85rem;
+}
+
+/* Flexrad med pill-knappar som radbryts vid behov */
+.links-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+/* Varje länk är en pill-knapp med blå accent */
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem 1rem;
+  border-radius: 99px;
+  border: 1px solid rgba(147,197,253,.38);
+  background: rgba(147,197,253,.08);
+  color: var(--accent2);
+  text-decoration: none;
+  font-size: .86rem;
+  font-weight: 700;
+  transition: background .18s, border-color .18s;
+}
+.link-pill:hover {
+  background: rgba(147,197,253,.15);
+  border-color: rgba(147,197,253,.55);
+}
+
+/* Admin-lista för länkar */
+.links-admin-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.links-admin-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  padding: .6rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255,255,255,.02);
+}
+.links-admin-name {
+  font-weight: 700;
+  font-size: .88rem;
+  min-width: 120px;
+}
+.links-admin-url {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .8rem;
+}
+.btn-small {
+  padding: .3rem .65rem;
+  font-size: .78rem;
+  border-radius: 8px;
+}
+.btn-danger {
+  border-color: rgba(248,113,113,.4);
+  background: rgba(248,113,113,.08);
+  color: #f87171;
+}
+.btn-danger:hover {
+  background: rgba(248,113,113,.15);
+}
+
 /* MODAL */
 .modal-overlay{
   position:fixed;

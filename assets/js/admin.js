@@ -48,6 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Håller koll på vilket styrelsemedlem-id som är aktivt vid bilduppladdning
   let currentBoardImageId = null;
 
+  // Startsida-länkar
+  const linksList    = document.getElementById("linksList");
+  const addLinkForm  = document.getElementById("addLinkForm");
+  const addLinkMsg   = document.getElementById("addLinkMsg");
+
   // Information-sidan
   const infoList      = document.getElementById("infoList");
   const addInfoForm   = document.getElementById("addInfoForm");
@@ -123,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadGalleryAdmin();
     loadMembers();
     loadBoard();
+    loadLinks();
     loadInfo();
     loadSponsors();
   }
@@ -627,6 +633,82 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+
+  // ─────────────────────────────
+  // Startsida — Länkar
+  // ─────────────────────────────
+
+  /**
+   * VARFÖR: Admin ska se och hantera externa länkar som visas på startsidan.
+   * VAD: Hämtar page_sections med page='startsida-lankar' och listar dem med raderingsknapp.
+   * HUR: GET /api/page-sections/startsida-lankar → rendera rad per länk.
+   */
+  async function loadLinks() {
+    linksList.innerHTML = "<p class='muted'>Laddar…</p>";
+    try {
+      const res  = await fetch("/api/page-sections/startsida-lankar");
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Kunde inte ladda");
+
+      if (!data.sections || data.sections.length === 0) {
+        linksList.innerHTML = "<p class='muted'>Inga länkar inlagda än.</p>";
+        return;
+      }
+
+      linksList.innerHTML = data.sections.map(s => `
+        <div class="admin-item links-admin-row" data-id="${s.id}">
+          <span class="links-admin-name">${esc(s.title)}</span>
+          <a href="${esc(s.content)}" target="_blank" rel="noopener"
+             class="muted small links-admin-url">${esc(s.content)}</a>
+          <button class="btn btn-small btn-danger"
+                  data-action="delete-link" data-id="${s.id}">Radera</button>
+        </div>
+      `).join("");
+    } catch (err) {
+      linksList.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
+    }
+  }
+
+  // Lägg till ny länk
+  addLinkForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title   = addLinkForm.querySelector('[name="title"]').value.trim();
+    const content = addLinkForm.querySelector('[name="content"]').value.trim();
+
+    try {
+      const res  = await fetch("/api/admin/page-sections", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ page: "startsida-lankar", title, content }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Kunde inte lägga till");
+
+      showMsg(addLinkMsg, "Länk tillagd!");
+      addLinkForm.reset();
+      await loadLinks();
+    } catch (err) {
+      showMsg(addLinkMsg, err.message, false);
+    }
+  });
+
+  // Radera länk via event delegation
+  linksList.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-action='delete-link']");
+    if (!btn) return;
+    const id = parseInt(btn.getAttribute("data-id"), 10);
+    if (!confirm("Ta bort länken permanent?")) return;
+
+    try {
+      const res  = await fetch(`/api/admin/page-sections/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Kunde inte ta bort");
+      await loadLinks();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
 
 
   // ─────────────────────────────

@@ -7,6 +7,8 @@
 
   <link rel="stylesheet" href="assets/css/style.css" />
   <script src="assets/js/main.js" defer></script>
+  <!-- home-links.js laddar och renderar redigerbara länkar från databasen -->
+  <script src="assets/js/home-links.js" defer></script>
 </head>
 
 <body>
@@ -43,6 +45,13 @@
       </article>
     </section>
 
+    <!-- Redigerbara externa länkar — laddas från databasen via home-links.js.
+         Admin kan lägga till/ta bort länkar (Facebook, Instagram m.m.) via adminpanelen. -->
+    <section class="home-links-section" id="homeLinksSection" style="display:none;">
+      <h2>Följ oss &amp; viktiga länkar</h2>
+      <div id="homeLinksGrid" class="links-grid"></div>
+    </section>
+
     <section class="visit">
       <h2>Besök oss</h2>
 
@@ -50,7 +59,7 @@
         <strong>Adress:</strong><br />
         Via Bygdegård<br />
         Backan 120<br />
-        824 94 (Hudiksvall/Ljusdal-trakten)
+        824 94 Hälsingland
       </p>
 
       <div class="map">

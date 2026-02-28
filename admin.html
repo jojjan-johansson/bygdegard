@@ -152,6 +152,32 @@
         <div id="boardList" class="board-admin-list">Laddar…</div>
       </section>
 
+      <!-- ---- Startsida: Länkar ---- -->
+      <section class="card admin-section">
+        <h2>Startsida — Länkar</h2>
+        <p class="muted small">Lägg till externa länkar som visas på startsidan (t.ex. Facebook, Instagram, Bygdegårdarnas Riksförbund). Visas som knappar under kortraderna.</p>
+
+        <form id="addLinkForm" class="form admin-add-form">
+          <div class="form-row">
+            <label for="linkTitle">
+              Namn *
+              <input id="linkTitle" name="title" type="text" placeholder="t.ex. Facebook, Instagram" required />
+            </label>
+            <label for="linkUrl">
+              URL *
+              <input id="linkUrl" name="content" type="url" placeholder="https://facebook.com/..." required />
+            </label>
+          </div>
+          <div>
+            <button class="btn" type="submit">+ Lägg till länk</button>
+            <span id="addLinkMsg" class="admin-msg"></span>
+          </div>
+        </form>
+
+        <!-- Lista med befintliga länkar — renderas av admin.js -->
+        <div id="linksList" class="links-admin-list">Laddar…</div>
+      </section>
+
       <!-- ---- Rad 5: Information-sidan ---- -->
       <section class="card admin-section">
         <h2>Information-sidan</h2>
