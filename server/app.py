@@ -38,7 +38,22 @@ from werkzeug.utils import secure_filename
 # Flask-appen pekar på projektroten (..) som static folder så att alla
 # HTML/CSS/JS-filer serveras direkt utan en separat webbserver.
 app = Flask(__name__, static_folder="..", static_url_path="")
-app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
+
+# Secret key måste vara stabil mellan omstarter — annars loggas admin ut
+# varje gång servern startas om (sessioner blir ogiltiga).
+# Prioritet: miljövariabel SECRET_KEY → sparad fil → generera ny och spara.
+def _load_secret_key() -> bytes:
+    env_key = os.environ.get("SECRET_KEY")
+    if env_key:
+        return env_key.encode()
+    key_file = Path(__file__).parent.parent / "data" / ".secret_key"
+    if key_file.exists():
+        return key_file.read_bytes()
+    key = os.urandom(32)
+    key_file.write_bytes(key)
+    return key
+
+app.secret_key = _load_secret_key()
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 DATA_DIR      = PROJECT_ROOT / "data"
