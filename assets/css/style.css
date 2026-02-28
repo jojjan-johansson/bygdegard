@@ -592,40 +592,65 @@ footer{
    SPONSORER-SIDAN
 ======================== */
 
-/* Sponsor-kort med logotyp */
+/* Sponsor-kort — samma struktur som event-kort (bild i topp, text nedan) */
 .sponsor-card {
+  padding: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1rem;
-  padding: 1.5rem;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.sponsor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
 }
 
-/* Sponsor-logotyp */
-.sponsor-logo,
+/* Bildcontainer — fast höjd med mörkad bakgrund för att logotyper ska synas */
+.sponsor-img-wrap {
+  width: 100%;
+  height: 160px;
+  background: rgba(255,255,255,.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Logotypen centreras och skalas ned utan att beskäras */
+.sponsor-logo {
+  max-width: 70%;
+  max-height: 110px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Gradient-placeholder när ingen bild är uppladdad */
 .sponsor-logo-placeholder {
   width: 100%;
-  max-width: 180px;
-  height: auto;
-  max-height: 100px;
-  object-fit: contain;
-  border-radius: 12px;
-  display: block;
-  margin: 0 auto;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(110,231,183,.18), rgba(147,197,253,.12));
 }
-.sponsor-logo-placeholder {
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, rgba(110,231,183,.12), rgba(147,197,253,.1));
+
+/* Textdelen — samma padding-upplägg som event-body */
+.sponsor-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .sponsor-card h2 {
-  margin: .5rem 0 .35rem;
-  font-size: 1.15rem;
+  margin: 0 0 .35rem;
+  font-size: 1.1rem;
 }
 
 .sponsor-card .btn {
-  margin-top: .5rem;
+  margin-top: auto;
+  padding-top: .75rem;
+  align-self: flex-start;
 }
 
 /* Admin-vy för sponsorer */
@@ -957,10 +982,9 @@ footer{
     max-width: 120px;
     margin: 0 auto;
   }
-  .sponsor-logo,
-  .sponsor-logo-placeholder {
-    max-width: 150px;
-    max-height: 80px;
+  .sponsor-logo {
+    max-width: 65%;
+    max-height: 90px;
   }
 
   /* Kort och sektioner */
