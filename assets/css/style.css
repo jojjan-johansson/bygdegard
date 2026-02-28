@@ -200,6 +200,99 @@ footer{
   flex-wrap: wrap;
 }
 
+/* ========================
+   DEV PROMO STRIP
+   En diskret men professionell sektion längst ned på varje sida som
+   presenterar webbutvecklaren bakom sajten. Tanken är att fånga besökare
+   som kan vara intresserade av en egen webbplats, utan att störa
+   föreningens eget innehåll. Layouten är tvåkolumns (text + CTA-knapp)
+   och faller ihop till en kolumn på mobil.
+======================== */
+.dev-promo-strip{
+  border-top: 1px solid var(--border);
+  padding: 1.1rem 0 1.6rem;
+  background: linear-gradient(180deg, rgba(110,231,183,.04) 0%, transparent 100%);
+}
+.dev-promo-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.dev-promo-text{
+  display:flex;
+  align-items:flex-start;
+  gap: .9rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+/* Litet dekorativt märke (grön/blå gradient-ruta) som ger sektionen
+   en visuell identitet utan att ta för mycket plats. */
+.dev-promo-mark{
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(110,231,183,.18), rgba(147,197,253,.14));
+  border: 1px solid rgba(110,231,183,.28);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top: 3px;
+  position:relative;
+}
+.dev-promo-mark::after{
+  content:'';
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  opacity: .85;
+}
+
+.dev-promo-headline{
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 .25rem;
+  letter-spacing: .01em;
+}
+.dev-promo-body{
+  font-size: .78rem;
+  color: var(--muted);
+  margin: 0;
+  max-width: 58ch;
+  line-height: 1.55;
+}
+
+/* CTA-länk med subtil grön glödeffekt vid hover */
+.dev-promo-cta{
+  display:inline-flex;
+  align-items:center;
+  gap: .4rem;
+  padding: .52rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(110,231,183,.38);
+  background: rgba(110,231,183,.08);
+  color: var(--accent);
+  text-decoration:none;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  transition: background .18s, border-color .18s, box-shadow .18s;
+}
+.dev-promo-cta:hover{
+  background: rgba(110,231,183,.14);
+  border-color: rgba(110,231,183,.55);
+  box-shadow: 0 0 18px rgba(110,231,183,.13);
+}
+@media(max-width:600px){
+  .dev-promo-inner{ flex-direction:column; align-items:flex-start; }
+}
+
 /* MODAL */
 .modal-overlay{
   position:fixed;
